@@ -50,15 +50,29 @@ cursor.execute("""
     )
 """)
 
-# Insert initial data
-cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)", 
+# Core table for this project: tasks
+# - id: integer PK
+# - description: task text
+# - created_at: creation timestamp (default now)
+# - completed: boolean-like integer (0/1)
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tasks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        completed INTEGER NOT NULL DEFAULT 0 CHECK (completed IN (0, 1))
+    )
+""")
+
+# Insert initial data / metadata
+cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)",
                ("project_name", "task_manager_database"))
-cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)", 
-               ("version", "0.1.0"))
-cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)", 
+cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)",
+               ("version", "0.2.0"))
+cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)",
                ("author", "John Doe"))
-cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)", 
-               ("description", ""))
+cursor.execute("INSERT OR REPLACE INTO app_info (key, value) VALUES (?, ?)",
+               ("description", "Task Manager SQLite database (includes tasks table)"))
 
 conn.commit()
 
